@@ -1,13 +1,16 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 project1 find "important happy words" in different groups
 
 HappyDB is a corpus of 100,000 crowd-sourced happy moments via Amazon's Mechanical Turk. 
 In this R notebook, I would process and clean the HappyDB data and then do something interesting, just like generate word cloud to show that nowadays which thing is happiness for people, and use TFIDF (Term Frequency-Inverse Document Frequency) to select and specify their own unique words for all ages groups.
 
-```{library packages and import data}
+```{r}
 
 library(ggplot2)
 library(NLP)
@@ -32,7 +35,7 @@ combined_data <-left_join(hm_data, demo_data, by='wid')
 ```
 
 first, I would like to clean the raw data. By browsing the happy data csv., I find that there are some mixed uppercase and lowercase letters, and there are also some numbers, punctuation that could not help me to analyze meaningful data text. So I want to remove them. Through using "tm" package, I could remove numbers, punctuation, uppercase and white space from the text. Then I do stem extracting from the text also through "tm" package.
-```{clean data}
+```{r}
 corpus = VCorpus(VectorSource(hm_data$cleaned_hm))
 corpus
 
@@ -75,7 +78,6 @@ completed_freq = completed_freq[sorted_index, ]
 
 wordcloud2(completed_freq, minSize = 5)
 ```
-
 After generate the total word cloud, I suppose that this word cloud could not represent the happy moment of all people, such as different ages or different countries. Hence I want to expose the specific happy moment for those specific people.
 
 However, it is easy to slice the total data into different groups and to independently generate the word cloud. But, we could see, some general words, such as "friend" "home" "family", they could not represent specific groups of people, They're all too common.
@@ -192,7 +194,11 @@ From this data frame, we could see that except for some very common words, young
 Then I would do some data visualization based on the calculated TFIDF values.
 
 ```{r}
-wordcloud2(top10, color = ifelse(top10[, 3] == 1, 'red', 'skyblue'),   size = 0.5, shape = 'diamond')
+top10cloud = select(top10,words,tf_idf)
+wordcloud2(top10cloud )
+```
+```{r}
+wordcloud2(top10, color = ifelse(top10[, 3] == 1, 'red', 'skyblue'), size = 0.5, shape = 'diamond')
 ```
 
 ```{r}
