@@ -190,22 +190,17 @@ top10
 From this data frame, we could see that except for some very common words, young people usually use 'bliss' 'virtue' and 'stimuli' to be their happy words, (a little more simple words, just like children) and middle aged people often use 'judgement' 'identify' 'flourish',(such words seems that they would look at things more rationally, huh), and in the end, the old people often use 'grandchildren' 'boiler' 'air conditioner', These words show that they care more about life.
 
 Then I would do some data visualization based on the calculated TFIDF values.
+
 ```{r}
-top10 %>% 
-  count(words) %>%
-  wordcloud2(color = ifelse(top10[, 3] == 1, 'red', 'skyblue'), size = 0.5,   shape = 'diamond')
+wordcloud2(top10, color = ifelse(top10[, 3] == 1, 'red', 'skyblue'),   size = 0.5, shape = 'diamond')
 ```
 
 ```{r}
-top10 %>% 
-  count(words) %>%
-  wordcloud2(color = ifelse(top10[, 3] == 2, 'orange', 'skyblue'), size = 0.5,   shape = 'diamond')
+wordcloud2(top10, color = ifelse(top10[, 3] == 2, 'orange', 'skyblue'), size = 0.5, shape = 'diamond')
 ```
 
 ```{r}
-top10 %>% 
-  count(words) %>%
-  wordcloud2(color = ifelse(top10[, 3] == 3, 'purple', 'skyblue'), size = 0.5, shape = 'diamond')
+wordcloud2(top10, color = ifelse(top10[, 3] == 3, 'purple', 'skyblue'), size = 0.5, shape = 'diamond')
 ```
 
 ```{r}

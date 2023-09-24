@@ -158,17 +158,13 @@ tf_idf_table %>%
   top_n(10,tf_idf) %>% 
   ungroup() -> top10
 
-top10 %>% 
-  count(words) %>%
-  wordcloud2(color = ifelse(top10[, 3] == 1, 'red', 'skyblue'), size = 0.5,
+wordcloud2(top10, color = ifelse(top10[, 3] == 1, 'red', 'skyblue'), 
              shape = 'diamond')
-top10 %>% 
-  count(words) %>%
-  wordcloud2(color = ifelse(top10[, 3] == 2, 'orange', 'skyblue'), size = 0.5,
+
+wordcloud2(top10, color = ifelse(top10[, 3] == 2, 'orange', 'skyblue'),
              shape = 'diamond')
-top10 %>% 
-  count(words) %>%
-  wordcloud2(color = ifelse(top10[, 3] == 3, 'purple', 'skyblue'), size = 0.5,
+
+ wordcloud2(top10, color = ifelse(top10[, 3] == 3, 'purple', 'skyblue'), 
              shape = 'diamond')
 
 
