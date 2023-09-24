@@ -159,7 +159,7 @@ tf_idf_table %>%
   ungroup() -> top10
 
 top10cloud = select(top10,words,tf_idf)
-wordcloud2(top10cloud )
+wordcloud2(top10cloud)
 
 wordcloud2(top10, color = ifelse(top10[, 3] == 1, 'red', 'skyblue'), 
              shape = 'diamond')
@@ -180,4 +180,4 @@ ggplot(top10[16:25,],aes(x = words, y = tf_idf)) +
 ggplot(top10[26:40,],aes(x = words, y = tf_idf)) +
   geom_bar(stat = "identity", fill = "yellow")
 
-
+getwd()
