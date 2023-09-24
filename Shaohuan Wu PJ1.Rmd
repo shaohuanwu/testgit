@@ -199,7 +199,7 @@ top10 %>%
 ```{r}
 top10 %>% 
   count(words) %>%
-  wordcloud2(color = ifelse(top10[, 3] == 2, 'orange', 'skyblue'), size = 0.5,  shape = 'diamond')
+  wordcloud2(color = ifelse(top10[, 3] == 2, 'orange', 'skyblue'), size = 0.5,   shape = 'diamond')
 ```
 
 ```{r}
