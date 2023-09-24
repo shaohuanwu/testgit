@@ -1,12 +1,3 @@
-urlfile<-'https://raw.githubusercontent.com/rit-public/HappyDB/master/happydb/data/cleaned_hm.csv'
-hm_data <- read_csv(urlfile)
-<<<<<<< Updated upstream
-=======
-
-urlfile<-'https://raw.githubusercontent.com/rit-public/HappyDB/master/happydb/data/demographic.csv'
-demo_data <- read_csv(urlfile)
-combined_data <-left_join(hm_data, demo_data, by='wid')
-
 install.packages("wordcloud")
 install.packages("SnowballC")
 install.packages("wordcloud2")
@@ -14,14 +5,25 @@ install.packages("jiebaR")
 install.packages("jiebaRD")
 install.packages("ggplot2")
 library(ggplot2)
->>>>>>> Stashed changes
 library(NLP)
 library(tidytext)
 library(tidyverse)
 library(tm)
 library(DT)
+library(RColorBrewer)
+library(wordcloud)
+library(SnowballC)
+library(wordcloud2)
+library(jiebaR)
+library(jiebaRD)
 
-test_data = slice(hm_data,10:30)
+urlfile<-'https://raw.githubusercontent.com/rit-public/HappyDB/master/happydb/data/cleaned_hm.csv'
+hm_data <- read_csv(urlfile)
+
+urlfile<-'https://raw.githubusercontent.com/rit-public/HappyDB/master/happydb/data/demographic.csv'
+demo_data <- read_csv(urlfile)
+combined_data <-left_join(hm_data, demo_data, by='wid')
+
 corpus = VCorpus(VectorSource(hm_data$cleaned_hm))
 corpus
 
@@ -30,46 +32,31 @@ corpus = corpus %>%
   tm_map(removePunctuation)%>%
   tm_map(removeNumbers)%>%
   tm_map(removeWords, character(0))%>%
-<<<<<<< Updated upstream
-=======
-  #tm_map(removeWords, stop_words$word)%>%
->>>>>>> Stashed changes
   tm_map(stripWhitespace)
-corpus
 
 stemmed <- tm_map(corpus, stemDocument) %>%
   tidy() %>%
+  distinct()%>%
   select(text)
-stemmed
-
-dict <- tidy(corpus) %>%
-  select(text) %>%
-  unnest_tokens(dictionary, text)
-dict
 
 data("stop_words")
 word <- c("happy","ago","yesterday","lot","today","months","month",
-          "happier","happiest","last","week","past")
+          "happier","happiest","last","week","past","happi","time","day","night",
+          "realli","veri","abl","feel")
 stop_words <- stop_words %>%
   bind_rows(mutate(tibble(word), lexicon = "updated"))
 
 clean_words <- stemmed %>%
   mutate(id = row_number()) %>%
+  distinct()%>%
   unnest_tokens(stems, text) %>%
-  bind_cols(dict) %>%
-  anti_join(stop_words, by = c("dictionary" = "word"))
-completed
+  anti_join(stop_words, by = c("stems" = "word"))
 
-<<<<<<< Updated upstream
-=======
 completed_freq = freq(clean_words$stems)
 sorted_index = order(completed_freq$freq, decreasing = T)
 completed_freq = completed_freq[sorted_index, ]
 
-wordcloud2(completed_freq, minSize = 5)
-
-#dtm=DocumentTermMatrix(corpus, control = list())
-#dtm_df <- as.data.frame(as.matrix(dtm))
+wordcloud2(completed_freq, minSize = 5, size = 0.5)
 
 young_data <- combined_data[combined_data$age <= 30, ]
 middle_data <- combined_data[30 < combined_data$age & combined_data$age <= 50, ]
@@ -193,34 +180,5 @@ ggplot(top10[16:25,],aes(x = words, y = tf_idf)) +
 
 ggplot(top10[26:40,],aes(x = words, y = tf_idf)) +
   geom_bar(stat = "identity", fill = "yellow")
-
-
-'''
->>>>>>> Stashed changes
-completed <- completed %>%
-  group_by(stems) %>%
-  count(dictionary) %>%
-  mutate(word = dictionary[which.max(n)]) %>%
-  ungroup() %>%
-  select(stems, word) %>%
-  distinct() %>%
-  right_join(completed) %>%
-  select(-stems)
-
-completed <- completed %>%
-  group_by(id) %>%
-  summarise(text = str_c(word, collapse = " ")) %>%
-  ungroup()
-<<<<<<< Updated upstream
-
-test_data <- test_data %>%
-  mutate(id = row_number()) %>%
-  inner_join(completed)
-
-datatable(test_data)
-=======
-'''
-
->>>>>>> Stashed changes
 
 
