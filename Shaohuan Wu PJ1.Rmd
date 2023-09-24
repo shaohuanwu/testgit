@@ -4,10 +4,10 @@ output: html_notebook
 ---
 project1 find "important happy words" in different groups
 
-HappyDB is a corpus of 100,000 crowd-sourced happy moments via Amazon's Mechanical Turk. You can read more about it on https://arxiv.org/abs/1801.07746
+HappyDB is a corpus of 100,000 crowd-sourced happy moments via Amazon's Mechanical Turk. 
 In this R notebook, I would process and clean the HappyDB data and then do something interesting, just like generate word cloud to show that nowadays which thing is happiness for people, and use TFIDF (Term Frequency-Inverse Document Frequency) to select and specify their own unique words for all ages groups.
 
-```{r}
+```{library packages and import data}
 
 library(ggplot2)
 library(NLP)
@@ -31,9 +31,8 @@ combined_data <-left_join(hm_data, demo_data, by='wid')
 
 ```
 
-
-first, I would like to clean the raw data. By browsing the happy data csv., I find that there are some mixed uppercase and lowercase letters, and there are also some numbers, punctuation that could not help me to analyze meaningful data text. So I want to remove them. Through using "tm" package, I could remove numbers, punctuation, uppercase and white space from the text. Then I stem the word,
-```{r}
+first, I would like to clean the raw data. By browsing the happy data csv., I find that there are some mixed uppercase and lowercase letters, and there are also some numbers, punctuation that could not help me to analyze meaningful data text. So I want to remove them. Through using "tm" package, I could remove numbers, punctuation, uppercase and white space from the text. Then I do stem extracting from the text also through "tm" package.
+```{clean data}
 corpus = VCorpus(VectorSource(hm_data$cleaned_hm))
 corpus
 
@@ -50,7 +49,7 @@ stemmed <- tm_map(corpus, stemDocument) %>%
   select(text)
 ```
 
-Second, I create a stop word dataset, and remove them from the text.
+Second, I create a stop word dataset, and remove them from the text. Then I extracted words from sentences and made a dataframe so that I could conduct further analysis.
 
 ```{r}
 data("stop_words")
@@ -67,7 +66,7 @@ clean_words <- stemmed %>%
   anti_join(stop_words, by = c("stems" = "word"))
 ```
 
-Then I would like to use the clean_word list to generate the total word cloud. First I count the frequency of all clean words, then I use wordcloud2() to generate the word cloud picture.
+Then I would like to use the clean_words dataframe to generate the total word cloud. First I count the frequency of all clean words, then I use wordcloud2() to generate the word cloud picture.
 
 ```{r}
 completed_freq = freq(clean_words$stems)
@@ -78,10 +77,12 @@ wordcloud2(completed_freq, minSize = 5)
 ```
 
 After generate the total word cloud, I suppose that this word cloud could not represent the happy moment of all people, such as different ages or different countries. Hence I want to expose the specific happy moment for those specific people.
-However, it is easy to slice the total data into different groups and to independently generate the word cloud. But, we could see, some wide words, such as "friend" "home" "family", they could not represent specific groups of people, They're all too common.
-Above all, I find that I could use TFIDF method to find some words that could represent specific groups of people. ( I will use different age groups as an example.)
 
-First, I divide all ages into three groups, young(age <= 30), middle(30 <age <= 50), and old(age > 50). And then I clean these data as above.
+However, it is easy to slice the total data into different groups and to independently generate the word cloud. But, we could see, some general words, such as "friend" "home" "family", they could not represent specific groups of people, They're all too common.
+Therefore, I suppose that I could use TFIDF method to find some words that could represent specific groups of people. ( I will use different age groups as an example.)
+
+First, I divide all ages into three groups, young(age <= 30), middle age(30 <age <= 50), and old age(age > 50). And then I clean these data just like above.
+
 ```{r}
 young_data <- combined_data[combined_data$age <= 30, ]
 middle_data <- combined_data[30 < combined_data$age & combined_data$age <= 50, ]
@@ -173,7 +174,8 @@ combined_by_row <- rbind(combined_by_row,completed_o_freq )
 
 ```
 
-Then I use 'tidytext' package to compute the value of TFIDF in three ages groups. As a result, we could see some different important happy words in young group, middle group and old group.
+Then I use 'tidytext' package to compute the value of TFIDF in three ages groups. As a result, we could see some different important happy words in young group, middle age group and old age group.
+
 ```{r}
 combined_by_row %>%
   bind_tf_idf(term = words,document = id,n = n) -> tf_idf_table
@@ -185,7 +187,7 @@ tf_idf_table %>%
 top10
 ```
 
-From this data table, we could see that young people usually use 'bliss' 'virtue' and 'stimuli' to be their happy words, (a little more simple words) and middle aged people often use 'judgement' 'identify' 'flourish',(such words seems that they would look at things more rationally, huh), and in the end, the old people often use 'grandchildren' 'boiler' 'air conditioner'.
+From this data frame, we could see that except for some very common words, young people usually use 'bliss' 'virtue' and 'stimuli' to be their happy words, (a little more simple words, just like children) and middle aged people often use 'judgement' 'identify' 'flourish',(such words seems that they would look at things more rationally, huh), and in the end, the old people often use 'grandchildren' 'boiler' 'air conditioner', These words show that they care more about life.
 
 Then I would do some data visualization based on the calculated TFIDF values.
 ```{r}
@@ -217,8 +219,8 @@ ggplot(top10[26:40,],aes(x = words, y = tf_idf)) +
   geom_bar(stat = "identity", fill = "yellow")
 
 ```
-
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+From these pictures, we could see different happy words in different groups vividly. To some extent, these happy words could represent their life and what they care about.
+In the future, I will carry out more work in terms of groups with different characteristics, such as different gender and different countries, and continue to study the happy moments of different groups.
 
 
 
