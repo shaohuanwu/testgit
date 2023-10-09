@@ -9,4 +9,3 @@ Next, we have performed a monthly analysis. You can use the slider to select a s
 We can also combine the two parts so that we can find something interesting. For example, it is possible to predict regions and seasons where certain disasters are more likely to occur. Take hurricane for instance. By observing the data, we can identify a higher frequency of hurricanes in the southeastern region during the autumn season. This information can be used to alert residents to take early preventive measures.
 
 
-![image](https://github.com/shaohuanwu/testgit/assets/144642786/ef129e11-b789-4bd8-9aeb-e1675b480e7a)
